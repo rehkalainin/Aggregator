@@ -5,8 +5,10 @@ import java.nio.file.Path
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Uri
 import akka.stream.scaladsl.{Sink, Source}
+import io.circe.generic.auto._
+import io.circe.syntax._
 import models.FlatfyModel
-import spray.json.{DefaultJsonProtocol, JsValue, JsonWriter}
+import spray.json.DefaultJsonProtocol
 
 import scala.concurrent.Future
 
@@ -17,16 +19,12 @@ case class Aggregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol 
   import actorSystem.dispatcher
 
 
-  def validationData(seq: Seq[List[FlatfyModel]]) = {
-    val list = seq.toList.flatten
-    list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100")
-  }
-
-  def toJson(list: List[FlatfyModel])(
-    implicit jsWriter: JsonWriter[List[FlatfyModel]]): JsValue = jsWriter.write(list)
-
   def findAll() = {
 
+    def validationData(seq: Seq[List[FlatfyModel]]) = {
+      val list = seq.toList.flatten
+      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100")
+    }
 
     val streetsFromCsv: Future[Set[String]] = ParsingCsvService.parsingStreetsCsv(filePath)
 
@@ -40,6 +38,6 @@ case class Aggregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol 
       .runWith(Sink.seq)
       .map(validationData)
       .map(_.sortWith((li1, li2) => li1.priceSqm.toInt < li2.priceSqm.toInt))
-      //.map(toJson)
+      .map(_.asJson)
   }
 }

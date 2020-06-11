@@ -9,6 +9,7 @@ val AkkaVersion = "2.6.5"
 val AkkaHttpVersion = "10.1.11"
 val AlpakkaVersion = "2.0.0"
 val ScalaScraperVersion = "2.2.0"
+val circeVersion = "0.12.3"
 
 libraryDependencies ++= Seq(
   "com.lightbend.akka" %% "akka-stream-alpakka-csv" % AlpakkaVersion,
@@ -18,6 +19,9 @@ libraryDependencies ++= Seq(
   "net.ruippeixotog" %% "scala-scraper" % ScalaScraperVersion,
 
   "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
+  "io.circe" %% "circe-core" % circeVersion,
+  "io.circe" %% "circe-generic" % circeVersion,
+  "io.circe" %% "circe-parser" % circeVersion,
 
   "com.typesafe.akka" %% "akka-slf4j" % AkkaVersion,
   "ch.qos.logback" % "logback-classic" % "1.2.3"
