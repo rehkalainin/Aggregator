@@ -5,26 +5,27 @@ import java.nio.file.Path
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Uri
 import akka.stream.scaladsl.{Sink, Source}
-import models.SiteDataModel
+import models.FlatfyModel
 import spray.json.{DefaultJsonProtocol, JsValue, JsonWriter}
 
 import scala.concurrent.Future
 
-case class Agregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol {
+case class Aggregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol {
 
   implicit val actorSystem = ActorSystem("Agregator")
 
   import actorSystem.dispatcher
 
-  def validationData(seq: Seq[List[SiteDataModel]]) = {
+
+  def validationData(seq: Seq[List[FlatfyModel]]) = {
     val list = seq.toList.flatten
     list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100")
   }
 
-  def toJson(list: List[SiteDataModel])(
-    implicit jsWriter: JsonWriter[List[SiteDataModel]]): JsValue = jsWriter.write(list)
+  def toJson(list: List[FlatfyModel])(
+    implicit jsWriter: JsonWriter[List[FlatfyModel]]): JsValue = jsWriter.write(list)
 
-  def run() = {
+  def findAll() = {
 
 
     val streetsFromCsv: Future[Set[String]] = ParsingCsvService.parsingStreetsCsv(filePath)

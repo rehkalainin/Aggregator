@@ -3,7 +3,7 @@ package services
 import java.net.URLEncoder
 
 import akka.actor.ActorSystem
-import models.SiteDataModel
+import models.FlatfyModel
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
@@ -70,6 +70,6 @@ object ScrapingService {
           case None => "none"
         }
     }
-    SiteDataModel(name, priceSqm, location, link)
+    FlatfyModel(name, priceSqm, location, link)
   }
 }

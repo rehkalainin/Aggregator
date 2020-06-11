@@ -6,9 +6,10 @@ import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.Uri
 import akka.stream.scaladsl.Source
-import models.SiteDataModel
+import controller.FlatfyController
+import models.FlatfyModel
 import services.ParsingCsvService.parsingStreetsCsv
-import services.Agregator
+import services.Aggregator
 import spray.json.JsValue
 
 import scala.concurrent.duration.Duration
@@ -17,17 +18,12 @@ import scala.concurrent.{Await, Future}
 object App extends App {
   implicit val actorSystem = ActorSystem("ActorSystem")
 
-  val filePath: Path = Paths.get("data.csv")
-  val siteUrl: Uri = "https://flatfy.lun.ua/uk/"
+  import actorSystem.dispatcher
 
-  val agregator = Agregator(filePath, siteUrl)
+  val binding: Future[Http.ServerBinding] = Http().bindAndHandle(WebRoutes.route, interface = "localhost", port = 8080)
 
-  val res = agregator.run()
-
-
-
-  val awaitRes = Await.result(res, Duration.Inf)
-  println(awaitRes)
-
+  actorSystem.registerOnTermination {
+    binding.flatMap(_.unbind())
+  }
 
 }
