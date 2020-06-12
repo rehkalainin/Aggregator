@@ -18,7 +18,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
   "net.ruippeixotog" %% "scala-scraper" % ScalaScraperVersion,
 
-  "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,

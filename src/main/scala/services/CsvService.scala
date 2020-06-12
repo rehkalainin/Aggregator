@@ -6,14 +6,13 @@ import akka.actor.ActorSystem
 import akka.stream.alpakka.csv.scaladsl.{CsvParsing, CsvToMap}
 import akka.stream.scaladsl.{FileIO, Sink}
 import models.CsvDataModel
+import modules.FlatfyModul._
 
 import scala.concurrent.Future
 
-object ParsingCsvService {
-
-  implicit val actorSystem = ActorSystem("ParsingCsvService")
-
+case class CsvService()(implicit actor: ActorSystem) {
   import actorSystem.dispatcher
+
 
   def cleanseCsvData(csvData: Map[String, String]): Map[String, String] = {
     csvData

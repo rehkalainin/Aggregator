@@ -2,22 +2,20 @@ package services
 
 import java.nio.file.Path
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Uri
 import akka.stream.scaladsl.{Sink, Source}
 import io.circe.generic.auto._
 import io.circe.syntax._
 import models.FlatfyModel
-import spray.json.DefaultJsonProtocol
+import modules.FlatfyModul._
 
 import scala.concurrent.Future
 
-case class Aggregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol {
-
-  implicit val actorSystem = ActorSystem("Agregator")
-
+case class Aggregator(filePath: Path, siteUrl: Uri) {
   import actorSystem.dispatcher
 
+  val csvService = CsvService()
+  val scrapingService = ScrapingService()
 
   def findAll() = {
 
@@ -26,14 +24,14 @@ case class Aggregator(filePath: Path, siteUrl: Uri) extends DefaultJsonProtocol 
       list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100")
     }
 
-    val streetsFromCsv: Future[Set[String]] = ParsingCsvService.parsingStreetsCsv(filePath)
+    val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)
 
     Source
       .future(streetsFromCsv)
       .mapConcat(_.toSet)
       .map { street =>
-        ScrapingService.scrapeListings(street) // List[Element]
-          .map(element => ScrapingService.scrapeData(element))
+        scrapingService.scrapeListings(street) // List[Element]
+          .map(element => scrapingService.scrapeData(element))
       }
       .runWith(Sink.seq)
       .map(validationData)

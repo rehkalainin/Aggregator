@@ -10,8 +10,7 @@ import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Element
 import org.jsoup.HttpStatusException
 
-object ScrapingService {
-  implicit val actorSystem = ActorSystem("ScrapingService")
+case class ScrapingService()(implicit actor:ActorSystem) {
 
   val browser = JsoupBrowser()
 
