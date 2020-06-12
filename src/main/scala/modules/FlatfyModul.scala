@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Uri
 import akka.stream.ActorMaterializer
 import controller.FlatfyController
-import services.{Aggregator, AggregatorServiceImpl}
+import services.{Aggregator, AggregatorScheduler, AggregatorServiceImpl}
 
 object FlatfyModul {
 
@@ -16,8 +16,10 @@ object FlatfyModul {
   val filePath: Path = Paths.get("data.csv")
   val siteUrl: Uri = "https://flatfy.lun.ua/uk/"
 
-  val agregator = Aggregator(filePath, siteUrl)
-  lazy val flatfyService = new AggregatorServiceImpl(agregator)
+  val aggregator = Aggregator(filePath, siteUrl)
+  val aggregatorScheduler = new AggregatorScheduler(aggregator)
+
+  lazy val flatfyService = new AggregatorServiceImpl(aggregatorScheduler)
   lazy val flatfyController = new FlatfyController(flatfyService)
 
 }

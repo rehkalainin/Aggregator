@@ -11,17 +11,18 @@ import modules.FlatfyModul._
 
 import scala.concurrent.Future
 
-case class Aggregator(filePath: Path, siteUrl: Uri) {
+case class Aggregator(filePath: Path, siteUrl: Uri){
+
   import actorSystem.dispatcher
 
   val csvService = CsvService()
-  val scrapingService = ScrapingService()
+  val scrapingService = ScrapingService
 
   def findAll() = {
 
-    def validationData(seq: Seq[List[FlatfyModel]]) = {
+    def preparationData(seq: Seq[List[FlatfyModel]]) = {
       val list = seq.toList.flatten
-      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100")
+      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100").take(10)
     }
 
     val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)
@@ -34,8 +35,9 @@ case class Aggregator(filePath: Path, siteUrl: Uri) {
           .map(element => scrapingService.scrapeData(element))
       }
       .runWith(Sink.seq)
-      .map(validationData)
+      .map(preparationData)
       .map(_.sortWith((li1, li2) => li1.priceSqm.toInt < li2.priceSqm.toInt))
       .map(_.asJson)
   }
+
 }

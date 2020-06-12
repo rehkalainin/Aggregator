@@ -2,7 +2,6 @@ package services
 
 import java.net.URLEncoder
 
-import akka.actor.ActorSystem
 import models.FlatfyModel
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -10,7 +9,7 @@ import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Element
 import org.jsoup.HttpStatusException
 
-case class ScrapingService()(implicit actor:ActorSystem) {
+object ScrapingService {
 
   val browser = JsoupBrowser()
 
