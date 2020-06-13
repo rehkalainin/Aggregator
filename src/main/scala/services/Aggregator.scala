@@ -22,10 +22,10 @@ case class Aggregator(filePath: Path, siteUrl: Uri){
 
     def preparationData(seq: Seq[List[FlatfyModel]]) = {
       val list = seq.toList.flatten
-      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100").take(10)
+      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100").drop(10)
     }
 
-    val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)
+    val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)git
 
     Source
       .future(streetsFromCsv)

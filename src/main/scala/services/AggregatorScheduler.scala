@@ -16,7 +16,7 @@ class AggregatorScheduler(aggregator: Aggregator)(implicit system: ActorSystem) 
   import system.dispatcher
 
   def start(): Unit =
-    system.scheduler.scheduleWithFixedDelay(Duration.Zero, 1.minute) { () =>
+    system.scheduler.scheduleWithFixedDelay(Duration.Zero, 60.minute) { () =>
       aggregator.findAll().onComplete {
         case Failure(e) => actorSystem.log.error(s"Can't scrape data from site:  $e")
         case Success(newData) => {
