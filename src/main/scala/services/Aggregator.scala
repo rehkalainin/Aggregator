@@ -25,7 +25,7 @@ case class Aggregator(filePath: Path, siteUrl: Uri){
       list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100").drop(10)
     }
 
-    val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)git
+    val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)
 
     Source
       .future(streetsFromCsv)

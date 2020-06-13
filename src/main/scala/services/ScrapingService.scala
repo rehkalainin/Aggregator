@@ -8,18 +8,18 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Element
 import org.jsoup.HttpStatusException
+import modules.FlatfyModul._
 
 object ScrapingService {
 
   val browser = JsoupBrowser()
-
-  val url = "https://flatfy.lun.ua/uk/"
+  
   val sellApartments = "продаж-квартир"
   val odessa = "-одеса"
   val orderDate = "?order=add-time"
 
   def createStreetUrl(street: String): String = {
-    url + URLEncoder.encode(sellApartments, "UTF-8") +
+    siteUrl + URLEncoder.encode(sellApartments, "UTF-8") +
       URLEncoder.encode("-вул-" + street.toLowerCase, "UTF-8") +
       URLEncoder.encode(odessa, "UTF-8") +
       orderDate
