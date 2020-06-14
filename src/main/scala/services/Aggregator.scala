@@ -22,7 +22,8 @@ case class Aggregator(filePath: Path, siteUrl: Uri){
 
     def preparationData(seq: Seq[List[FlatfyModel]]) = {
       val list = seq.toList.flatten
-      list.filterNot(model => model.priceSqm == "none" | model.priceSqm < "100").drop(10)
+      list.filterNot(model => model.priceSqm == "none")
+          .filterNot(model => model.priceSqm.toInt < 100)
     }
 
     val streetsFromCsv: Future[Set[String]] = csvService.parsingStreetsCsv(filePath)
@@ -37,6 +38,7 @@ case class Aggregator(filePath: Path, siteUrl: Uri){
       .runWith(Sink.seq)
       .map(preparationData)
       .map(_.sortWith((li1, li2) => li1.priceSqm.toInt < li2.priceSqm.toInt))
+      .map(_.take(10))
       .map(_.asJson)
   }
 

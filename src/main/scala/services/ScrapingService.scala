@@ -47,7 +47,7 @@ object ScrapingService {
     val link = element >> extractor("a", attr("href"))
     val data = element >> extractor("div", allText)
 
-    val priceSqmData = element >?> extractor(".jss192", text) // class="jss192" sometimes changing
+    val priceSqmData = element >?> extractor(".jss1478", text) // class="jss1478" sometimes changing
     val priceSqm = priceSqmData match {
       case Some(price) => price.split("[$]").head.split(" ").mkString
       case None => {
@@ -58,7 +58,7 @@ object ScrapingService {
         }
       }
     }
-    val locationData = element >?> extractor(".jss186", text) // class="jss186" sometimes changing
+    val locationData = element >?> extractor(".jss1472", text) // class="jss1472" sometimes changing
     val location = locationData match {
       case Some(loc) => loc.toLowerCase
       case None =>
