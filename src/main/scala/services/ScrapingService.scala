@@ -44,7 +44,9 @@ object ScrapingService {
 
     val nameData = element >> extractor("span", text)
     val name = nameData.split(" ").last.toLowerCase
-    val link = element >> extractor("a", attr("href"))
+    val href = element >> extractor("a", attr("href"))
+    val link = "https://flatfy.lun.ua".concat(href)
+
     val data = element >> extractor("div", allText)
 
     val priceSqmData = element >?> extractor(".jss1478", text) // class="jss1478" sometimes changing
@@ -68,6 +70,6 @@ object ScrapingService {
           case None => "none"
         }
     }
-    FlatfyModel(name, priceSqm, location, link)
+    FlatfyModel(name, priceSqm, location,link)
   }
 }
