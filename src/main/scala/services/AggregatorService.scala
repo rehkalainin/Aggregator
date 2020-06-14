@@ -22,7 +22,7 @@ class AggregatorServiceImpl(agregator: AggregatorScheduler) extends AggregatorSe
       case Some(value) => Future(value)
       case None=> {
         actorSystem.log.error("Failed to update data, please wait new update")
-        Future("<h1>Was problem on server side, please wait new update</h1>".asJson)
+        Future("Was problem on server side, please wait new update".asJson)
       }
     }
   }

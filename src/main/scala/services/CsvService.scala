@@ -11,6 +11,7 @@ import modules.FlatfyModul._
 import scala.concurrent.Future
 
 case class CsvService()(implicit actor: ActorSystem) {
+
   import actorSystem.dispatcher
 
 
@@ -36,14 +37,21 @@ case class CsvService()(implicit actor: ActorSystem) {
 
 
   def parsingStreetsCsv(filePath: Path): Future[Set[String]] = {
-    FileIO.fromPath(filePath)
-      .via(CsvParsing.lineScanner()) //: List[ByteString]
-      .via(CsvToMap.toMapAsStrings()) //: Map[String, String]
-      .map(cleanseCsvData) // Map[String,String]
-      .map(createCsvDataModels) //CsvDataModel
-      .filter { model => model.rigion == "Одеська" }
-      .runWith(Sink.seq) //Seq[CsvDataModel]
-      .map(scrapingStreets)
-  }
+    try {
+      FileIO.fromPath(filePath)
+        .via(CsvParsing.lineScanner()) //: List[ByteString]
+        .via(CsvToMap.toMapAsStrings()) //: Map[String, String]
+        .map(cleanseCsvData) // Map[String,String]
+        .map(createCsvDataModels) //CsvDataModel
+        .filter { model => model.rigion == "Одеська" }
+        .runWith(Sink.seq) //Seq[CsvDataModel]
+        .map(scrapingStreets)
+    } catch {
+      case ex: Exception => {
+        actorSystem.log.error(s"Problem with scraping data from csv: $ex")
+        Future(Set())
+      }
+    }
 
+  }
 }

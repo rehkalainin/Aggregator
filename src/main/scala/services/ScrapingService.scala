@@ -13,7 +13,7 @@ import modules.FlatfyModul._
 object ScrapingService {
 
   val browser = JsoupBrowser()
-  
+
   val sellApartments = "продаж-квартир"
   val odessa = "-одеса"
   val orderDate = "?order=add-time"
@@ -49,27 +49,16 @@ object ScrapingService {
 
     val data = element >> extractor("div", allText)
 
-    val priceSqmData = element >?> extractor(".jss1478", text) // class="jss1478" sometimes changing
-    val priceSqm = priceSqmData match {
-      case Some(price) => price.split("[$]").head.split(" ").mkString
-      case None => {
-        val priceSqmPattern = "(?:(?<=[$] )[0-9| ]*)".r
-        priceSqmPattern.findFirstIn(data) match {
-          case Some(price) => price.split(" ").mkString
-          case None => "none"
-        }
-      }
+    //    val priceSqm = element >?> extractor(".jss192", text) // class="jss192" not stable sometimes changing
+    val priceSqmPattern = "(?:(?<=[$] )[0-9| ]*)".r
+    val priceSqm = priceSqmPattern.findFirstIn(data) match {
+      case Some(price) => price.split(" ").mkString
+      case None => "none"
     }
-    val locationData = element >?> extractor(".jss1472", text) // class="jss1472" sometimes changing
-    val location = locationData match {
-      case Some(loc) => loc.toLowerCase
-      case None =>
-        val locationPattern = "[А-Я][а-я]*[,][ ][А-Я][а-я]*".r
-        locationPattern.findFirstIn(data) match {
-          case Some(loc) => loc
-          case None => "none"
-        }
-    }
-    FlatfyModel(name, priceSqm, location,link)
+
+    //    val location = element >?> extractor(".jss186", text) // class="jss186" not stable sometimes changing
+    val location = data.split(" ").drop(5).head
+
+    FlatfyModel(name, priceSqm, location, link)
   }
 }
